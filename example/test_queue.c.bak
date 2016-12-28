@@ -1,0 +1,34 @@
+/**
+ * 测试下queue的使用
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "queueSimple/queue.h"
+void * test(void * con, size_t n) {
+	void * testaa = (void *)malloc(sizeof(size_t) * n);
+	memcpy(testaa, con, n);
+	return testaa;
+
+}
+int main() {
+	/** ---------------测试使用整型数据入队列 ------------------------------*/
+//	/** 创建一个队列 */
+//	Queue * queue = createNewQueue();
+//	/** 开始入一批整型数据 */
+//	for (int i = 0;i < 10;i++) {
+//		addToQueue(queue, &i, sizeof(i)/sizeof(int));
+//	}
+//	/** 开始读取队列 */
+//	void * content;
+//	content = readFromQueue(queue);
+//	printf("%d\n", *((int *)content));
+//	content = readFromQueue(queue);
+//	printf("%d\n", *((int *)content));
+	/** ---------------测试使用整型数据入队列 ------------------------------*/
+	/** ---------------测试字符串数据入队列 --------------------------------*/
+
+	/** ---------------测试字符串数据入队列 --------------------------------*/
+	return 1;
+}

@@ -15,4 +15,5 @@ C_DEPS :=
 SUBDIRS := \
 . \
 multiStringMatch/ac \
+queueSimple \
 
