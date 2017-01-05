@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include "multiStringMatch/ac/ac.h"
 #include <string.h>
+#include <locale.h>
 
 int main() {
+	setlocale(LC_ALL, "");
 	/** 测试ac自动机算法使用 */
 	TreeNode * root = buildTree();
-	char pattern[][30]={"nihao","hao","hs","hsr", "hsn"};
+	char pattern[][30]={"bcc虽然", "nihao","hao","hs","hsr", "hsn", "但是"};
 	/** 填充tree树 */
 	for(int i= 0;i<5;i++) {
 		fillToTree(root, pattern[i]);
