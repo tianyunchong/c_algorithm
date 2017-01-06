@@ -8,7 +8,7 @@ typedef struct _TreeNode {
 	struct _TreeNode *children[100];//子节点
 	struct _TreeNode *parent;//父节点
 	struct _TreeNode *fail;//失败指针
-	wchar_t inputchar;//当前节点的字符
+	char inputchar[4];//当前节点的字符
 	char inputcharId;//当前节点字符对应的数字
 	char string[1000];//当前节点的字符串
 	int isMatch;//是否为匹配节点
@@ -17,10 +17,9 @@ TreeNode * buildTree();
 void fillToTree(TreeNode * root, char * str);
 void buildingFailPath(TreeNode * root) ;
 void SearchAc(TreeNode * root, char * text);
-int isHasCharChildNode(TreeNode * node, char chr);
+int isHasCharChildNode(TreeNode * node, char * chr);
 int getIntOfWideChar(wchar_t chr);
-int getChildNumOfTreeNode(TreeNode * node, wchar_t chr);
+int getChildNumOfTreeNode(TreeNode * node, char * str);
+int getFirstIntOfMultiChar(char * chr);
 void bfsScanTreeNode(TreeNode * root);
-extern int treeChildLen;
-extern int nodeId;
 #endif
