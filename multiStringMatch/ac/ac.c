@@ -36,34 +36,42 @@ TreeNode * buildTree() {
 void fillToTree(TreeNode * root, char * str) {
 	TreeNode * current = root;
 	//遍历下当前字符串，中英文字符各占用一个节点
-	char tmp[4] = {0};
+	char tmp[4] = { 0 };
 	while (*str != '\0') {
+		memset(tmp, '\0', sizeof(char) * 4);
+		int isAscii = 0;
 		if (isascii(*str)) {
-			str++;
+			isAscii = 1;
 			memcpy(tmp, str, sizeof(char));
 		} else {
 			memcpy(tmp, str, sizeof(char) * 3);
-			str = str + 3;
 		}
+		//printf("isAscii=%d, curchar=%c, %s\n", isAscii,*str, tmp);
 		//开始处理增加节点,判断下当前字符是否已经在当前节点的子节点中存在
 		int numOfChild = getChildNumOfTreeNode(current, tmp);
 		if (numOfChild < 1) {
 			TreeNode * child = getNewTreeNode();
 			strcpy(child->inputchar, tmp);
-			child->inputcharId = getIntOfWideChar(getFirstIntOfMultiChar(tmp));
+			child->inputcharId = getFirstIntOfMultiChar(tmp);
 			child->parent = current;
 			//如果当前指针的下一个指针是\0,则当前字符节点是匹配节点
-			if (*(str+1) == '\0') {
+			int nStep = 3;
+			if (isAscii) nStep = 1;
+			if (*(str + nStep) == '\0') {
 				child->isMatch = 1;
 			}
 			/** 设置下当前节点代表的字符串 */
 			sprintf(child->string, "%s%s", current->string, tmp);
-			printf("%s\n", tmp);
 			current->children[current->childNum++] = child;
 			/** 设置当前节点为之前节点的新字节点 */
 			current = child;
 		} else {
 			current = current->children[numOfChild - 1];
+		}
+		if (isAscii) {
+			str++;
+		} else {
+			str = str + 3;
 		}
 	}
 }
@@ -85,7 +93,7 @@ void bfsScanTreeNode(TreeNode * root) {
 		//转换为treeNode
 		current = *((TreeNode **) tmp);
 		//输出下节点的信息
-		if (current->string[0] != '\0') {
+		if (current->parent != NULL) {
 			printf("当前节点为:%s\n", current->string);
 			printf("当前节点子节点数量:%d\n", current->childNum);
 			printf("当前节点字符为:%s\n", current->inputchar);
@@ -142,12 +150,12 @@ int getChildNumOfTreeNode(TreeNode * node, char * str) {
  * 获取宽字节字符对应的数字
  */
 int getIntOfWideChar(wchar_t chr) {
-	char *tmp = (char *)malloc(sizeof(char) * 20);
+	char *tmp = (char *) malloc(sizeof(char) * 20);
 	char * tmp1;
 	//获取下宽字符对应的16进制字符串
 	sprintf(tmp, "%x", chr);
 	//转换成10进制
-	int res = (int)strtol(tmp, &tmp1, 16);
+	int res = (int) strtol(tmp, &tmp1, 16);
 	free(tmp);
 	return res;
 }
@@ -161,13 +169,13 @@ int getFirstIntOfMultiChar(char * chr) {
 	memset(wstr, L'\0', sizeof(wchar_t) * 100);
 	mbstowcs(wstr, chr, sizeof(wchar_t) * 100);
 	//转为16进制字符串
-	char res[4] = {0};
+	char res[4] = { 0 };
 	while (*wstr != L'\0') {
 		sprintf(res, "%x", *wstr);
 		break;
 	}
 	char * tmp;
-	int n = (int)strtol(res, &tmp, 16);
+	int n = (int) strtol(res, &tmp, 16);
 	return n;
 }
 
@@ -179,12 +187,6 @@ void buildingNodeFailPath(TreeNode * current, TreeNode * root) {
 		current->fail = root;
 		return;
 	}
-	// 设置下当前节点的失败指针
-//	if (current->string[0] != '\0') {
-//		printf("----------------当前处理节点%s----------------\n", current->string);
-//	} else {
-//		printf("----------------当前处理节点%s-----------------\n", "root");
-//	}
 	TreeNode * parent = NULL;
 	int numChildOfNode;
 	while (1) {
@@ -193,9 +195,9 @@ void buildingNodeFailPath(TreeNode * current, TreeNode * root) {
 		if (parent == root) {
 			current->fail = root;
 			break;
-		} else if (parent->fail != NULL
-				&& (numChildOfNode = getChildNumOfTreeNode(parent->fail, current->inputchar)) > 0) {
-			current->fail = parent->fail->children[numChildOfNode-1];
+		} else if (parent->fail != NULL && (numChildOfNode =
+				getChildNumOfTreeNode(parent->fail, current->inputchar)) > 0) {
+			current->fail = parent->fail->children[numChildOfNode - 1];
 			break;
 		} else if (parent->fail == root) {
 			current->fail = root;
@@ -250,22 +252,34 @@ void buildingFailPath(TreeNode * root) {
 /**
  * 搜索获取匹配的字符串
  */
-//void SearchAc(TreeNode * root, char * text) {
-//	TreeNode * tmp = root;
-//	int len = strlen(text);
-//	int i = 0;
-//	//循环遍历text的内容
-//	int numChildOfNode;
-//	while (i < len) {
-//		if ((numChildOfNode = getChildNumOfTreeNode(tmp, text[i]))) {
-//			tmp = tmp->children[numChildOfNode-1];
-//			//是叶子节点，输出匹配的内容
-//			if (tmp->isMatch == 1) {
-//				printf("匹配到:%s\n", tmp->string);
-//			}
-//		} else {
-//			tmp = tmp->fail;
-//		}
-//		i++;
-//	}
-//}
+void SearchAc(TreeNode * root, char * text) {
+	TreeNode * tmp = root;
+	//循环遍历text的内容
+	int numChildOfNode;
+	char tmpStr[4] = { 0 };
+	while (*text != '\0') {
+		memset(tmpStr, '\0', sizeof(char) * 4);
+		int isAscii = 0;
+		if (isascii(*text)) {
+			isAscii = 1;
+			memcpy(tmpStr, text, sizeof(char));
+		} else {
+			memcpy(tmpStr, text, sizeof(char) * 3);
+		}
+		//开始搜索当前中文或者英文字符
+		if ((numChildOfNode = getChildNumOfTreeNode(tmp, tmpStr))) {
+			tmp = tmp->children[numChildOfNode - 1];
+			//是叶子节点，输出匹配的内容
+			if (tmp->isMatch == 1) {
+				printf("匹配到:%s\n", tmp->string);
+			}
+		} else {
+			tmp = tmp->fail;
+		}
+		if (isAscii) {
+			text++;
+		} else {
+			text = text + 3;
+		}
+	}
+}

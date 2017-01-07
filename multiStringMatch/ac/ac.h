@@ -9,7 +9,7 @@ typedef struct _TreeNode {
 	struct _TreeNode *parent;//父节点
 	struct _TreeNode *fail;//失败指针
 	char inputchar[4];//当前节点的字符
-	char inputcharId;//当前节点字符对应的数字
+	int inputcharId;//当前节点字符对应的数字
 	char string[1000];//当前节点的字符串
 	int isMatch;//是否为匹配节点
 } TreeNode;
